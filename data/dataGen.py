@@ -10,7 +10,7 @@ import os, math, uuid, sys, random
 import numpy as np
 import utils 
 
-samples           = int(60 * 1e3)      # no. of datasets to produce
+samples           = int(60e3)      # no. of datasets to produce
 freestream_angle  = math.pi / 8.  # -angle ... angle
 freestream_length = 10.           # len * (1. ... factor)
 freestream_length_factor = 10.    # length factor
@@ -181,3 +181,47 @@ for n in range(samples):
 
     outputProcessing(basename, fsX, fsY, imageIndex=n)
     print("\tdone")
+
+
+"""
+## error:
+Unknown sample set type cloud.
+
+## for mac user, if you use docker to run openfoam, please see below method,
+if you use openfoam from https://github.com/gerlero/openfoam-app, current version can be used correctly.
+
+## for ubuntu 22.04 openfoam V10 gmsh 4.8.4
+
+## solved method: 
+the file located in data/OpenFOAM/system/internalCloud need be modified
+
+sets
+(
+    cloud
+    {
+        type    points; # modified
+        axis    xyz;
+        points  $points;
+        ordered yes; # added
+    }
+);
+
+reference link
+https://www.cfd-online.com/Forums/openfoam-post-processing/212376-what-happened-sample-utility-openfoam-6-a.html
+
+reference content
+Quote:
+Originally Posted by CFD-HSNR  View Post
+Hi kerim,
+
+Have you found a solution? I have exactly the same problem right now.
+
+Please look at this file - points.H
+
+You can find it in the OpenFoam installation folder:
+
+openfoam/src/sampling/sampledSet/points.H
+Kerim.
+
+PS. Please have a critical look at User Guide. There are some wrong statements!
+"""
