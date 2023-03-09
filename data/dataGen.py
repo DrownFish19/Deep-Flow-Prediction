@@ -80,7 +80,13 @@ def runSim(freestreamX, freestreamY):
 
     os.system("./Allclean && simpleFoam > foam.log")
 
-def outputProcessing(basename, freestreamX, freestreamY, dataDir=output_dir, pfile='OpenFOAM/postProcessing/internalCloud/500/cloud_p.xy', ufile='OpenFOAM/postProcessing/internalCloud/500/cloud_U.xy', res=128, imageIndex=0): 
+def outputProcessing(basename, freestreamX, freestreamY, dataDir=output_dir, p_ufile='OpenFOAM/postProcessing/internalCloud/500/cloud_p_U.xy', res=128, imageIndex=0):
+
+    """
+    pfile 4 dims
+    ufile 6 dims
+    p_ufile 7 dims (repeated 3 dims)
+    """
     # output layout channels:
     # [0] freestream field X + boundary
     # [1] freestream field Y + boundary
@@ -90,7 +96,7 @@ def outputProcessing(basename, freestreamX, freestreamY, dataDir=output_dir, pfi
     # [5] velocity Y output
     npOutput = np.zeros((6, res, res))
 
-    ar = np.loadtxt(pfile)
+    ar = np.loadtxt(p_ufile)
     curIndex = 0
 
     for y in range(res):
@@ -108,7 +114,7 @@ def outputProcessing(basename, freestreamX, freestreamY, dataDir=output_dir, pfi
                 # fill mask
                 npOutput[2][x][y] = 1.0
 
-    ar = np.loadtxt(ufile)
+    ar = np.loadtxt(p_ufile)
     curIndex = 0
 
     for y in range(res):
@@ -116,8 +122,8 @@ def outputProcessing(basename, freestreamX, freestreamY, dataDir=output_dir, pfi
             xf = (x / res - 0.5) * 2 + 0.5
             yf = (y / res - 0.5) * 2
             if abs(ar[curIndex][0] - xf)<1e-4 and abs(ar[curIndex][1] - yf)<1e-4:
-                npOutput[4][x][y] = ar[curIndex][3]
-                npOutput[5][x][y] = ar[curIndex][4]
+                npOutput[4][x][y] = ar[curIndex][4]
+                npOutput[5][x][y] = ar[curIndex][5]
                 curIndex += 1
             else:
                 npOutput[4][x][y] = 0
