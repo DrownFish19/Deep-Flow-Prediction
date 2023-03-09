@@ -108,3 +108,6 @@ venv.bak/
 /data/airfoil_database_test/
 /openfoam5结果/data_pictures/
 /.idea/
+/data/train/
+/data/OpenFOAM/
+/data/data_pictures/
