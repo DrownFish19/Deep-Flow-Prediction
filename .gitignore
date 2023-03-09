@@ -104,3 +104,7 @@ venv.bak/
 .mypy_cache/
 
 .DS_Store
+/data/airfoil_database/
+/data/airfoil_database_test/
+/openfoam5结果/data_pictures/
+/.idea/

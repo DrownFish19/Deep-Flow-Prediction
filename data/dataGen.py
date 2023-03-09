@@ -10,7 +10,7 @@ import os, math, uuid, sys, random
 import numpy as np
 import utils 
 
-samples           = 100           # no. of datasets to produce
+samples           = int(60 * 1e3)      # no. of datasets to produce
 freestream_angle  = math.pi / 8.  # -angle ... angle
 freestream_length = 10.           # len * (1. ... factor)
 freestream_length_factor = 10.    # length factor
@@ -78,7 +78,9 @@ def runSim(freestreamX, freestreamY):
                 line = line.replace("VEL_Y", "{}".format(freestreamY))
                 outFile.write(line)
 
-    os.system("./Allclean && simpleFoam > foam.log")
+    if os.system("./Allclean && simpleFoam > foam.log") != 0:
+        print("error during simpleFoam!")
+        return -1
 
 def outputProcessing(basename, freestreamX, freestreamY, dataDir=output_dir, p_ufile='OpenFOAM/postProcessing/internalCloud/500/cloud_p_U.xy', res=128, imageIndex=0):
 
@@ -129,14 +131,14 @@ def outputProcessing(basename, freestreamX, freestreamY, dataDir=output_dir, p_u
                 npOutput[4][x][y] = 0
                 npOutput[5][x][y] = 0
 
-    utils.saveAsImage('data_pictures/pressure_%04d.png'%(imageIndex), npOutput[3])
-    utils.saveAsImage('data_pictures/velX_%04d.png'  %(imageIndex), npOutput[4])
-    utils.saveAsImage('data_pictures/velY_%04d.png'  %(imageIndex), npOutput[5])
-    utils.saveAsImage('data_pictures/inputX_%04d.png'%(imageIndex), npOutput[0])
-    utils.saveAsImage('data_pictures/inputY_%04d.png'%(imageIndex), npOutput[1])
+    utils.saveAsImage('data_pictures/pressure_%07d.png'%(imageIndex), npOutput[3])
+    utils.saveAsImage('data_pictures/velX_%07d.png'  %(imageIndex), npOutput[4])
+    utils.saveAsImage('data_pictures/velY_%07d.png'  %(imageIndex), npOutput[5])
+    utils.saveAsImage('data_pictures/inputX_%07d.png'%(imageIndex), npOutput[0])
+    utils.saveAsImage('data_pictures/inputY_%07d.png'%(imageIndex), npOutput[1])
 
     #fileName = dataDir + str(uuid.uuid4()) # randomized name
-    fileName = dataDir + "%s_%d_%d" % (basename, int(freestreamX*100), int(freestreamY*100) )
+    fileName = dataDir + "%s_%07d_%06d_%06d" % (basename, imageIndex, int(freestreamX*100), int(freestreamY*100))
     print("\tsaving in " + fileName + ".npz")
     np.savez_compressed(fileName, a=npOutput)
 
